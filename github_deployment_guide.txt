@@ -1,0 +1,47 @@
+Deploying Your Portfolio to GitHub Pages:
+
+1. Create a GitHub account:
+   - If you don't already have one, sign up at https://github.com
+
+2. Create a new repository:
+   - Click the "+" icon in the top right corner and select "New repository"
+   - Name your repository (for example, "portfolio")
+   - Choose "Public" visibility
+   - Click "Create repository"
+
+3. Initialize Git in your local project:
+   - Open a command prompt or terminal
+   - Navigate to your portfolio directory:
+     cd /d:/Site\ portofolio
+   - Initialize Git:
+     git init
+   - Add all your files:
+     git add .
+   - Commit your files:
+     git commit -m "Initial portfolio website commit"
+
+4. Connect to your GitHub repository:
+   - Link your local repository to the GitHub repository:
+     git remote add origin https://github.com/yourusername/portfolio.git
+   - Push your code:
+     git push -u origin main
+     (Note: If using an older Git version, you might need to use 'master' instead of 'main')
+
+5. Configure GitHub Pages:
+   - Go to your repository on GitHub
+   - Click on "Settings" tab
+   - Scroll down to "GitHub Pages" section
+   - Under "Source", select the branch you want to deploy (usually "main")
+   - Click "Save"
+
+6. Access your deployed website:
+   - Your website will be available at: https://yourusername.github.io/portfolio/
+   - It may take a few minutes for your site to be published
+
+7. Updating your website:
+   - Make changes to your local files
+   - Commit and push the changes:
+     git add .
+     git commit -m "Updated portfolio content"
+     git push
+   - Your GitHub Pages site will automatically update
