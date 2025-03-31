@@ -1,6 +1,6 @@
-# My Portfolio Website
+# Your Name - Portfolio Website
 
-A modern, responsive portfolio website built with HTML, CSS, and JavaScript. This website is designed to showcase your projects, skills, and contact information in a clean and professional manner.
+A modern, responsive portfolio website built with HTML, CSS, and JavaScript. This website is designed to showcase my projects, skills, and contact information in a clean and professional manner.
 
 ## Features
 

@@ -1,0 +1,49 @@
+# Personalization Checklist for Your Portfolio
+
+## Basic Information (Essential)
+- [ ] Replace "Your Name" with your actual name throughout the site
+- [ ] Update page title in <head> section
+- [ ] Update profession/title in the hero section
+- [ ] Add your own tagline/description
+- [ ] Write your own "About Me" text
+- [ ] Add your real contact information (email, phone, location)
+- [ ] Update copyright text in the footer
+
+## Images (Essential)
+- [ ] Add your profile photo as "profile.jpg" in the img folder
+- [ ] Add a hero background image as "hero-bg.jpg" in the img folder
+- [ ] Add project screenshots as "project1.jpg", "project2.jpg", etc.
+
+## Projects (Essential)
+- [ ] Replace sample projects with your actual work
+- [ ] Update project descriptions
+- [ ] Update technology tags for each project
+- [ ] Add correct links to project demos and code repositories
+
+## Social Media (Important)
+- [ ] Update GitHub profile link
+- [ ] Update LinkedIn profile link
+- [ ] Update Twitter/X profile link (or remove if not used)
+- [ ] Add any other social media platforms you use
+
+## Skills (Important)
+- [ ] Update the skills section to accurately reflect your abilities
+- [ ] Add or remove skill categories as needed
+- [ ] Ensure icons match the skills you're listing
+
+## Visual Customization (Optional)
+- [ ] Change the primary and secondary colors in CSS
+- [ ] Modify fonts if desired
+- [ ] Adjust spacing or layout if needed
+
+## Additional Content (Optional)
+- [ ] Add a resume download button
+- [ ] Add testimonials section
+- [ ] Add a blog section
+- [ ] Add education history
+- [ ] Add work experience
+
+## Points of Interest (Optional but Recommended)
+- [ ] Update the Points of Interest section with your own interests
+- [ ] Choose appropriate icons for each interest
+- [ ] Write brief descriptions that reflect your passion for these topics

@@ -84,7 +84,10 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('scroll', revealElements);
     
     function revealElements() {
-        const elements = document.querySelectorAll('.section-title, .about-content, .project-card, .skill-category');
+        const elements = document.querySelectorAll(
+            '.section-title, .about-content, .project-card, .skill-category, ' +
+            '.course-category, .project-category, .interest-item'
+        );
         
         for (let i = 0; i < elements.length; i++) {
             const windowHeight = window.innerHeight;
@@ -99,4 +102,45 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Call it once to check elements that are already in view
     revealElements();
+
+    // Handle project link clicks - check if they're placeholder links
+    document.querySelectorAll('.project-links a').forEach(link => {
+        link.addEventListener('click', function(e) {
+            const href = this.getAttribute('href');
+            if (href === '#') {
+                e.preventDefault();
+                alert('This is a placeholder link. Replace it with your actual project URL in the HTML file.');
+            }
+        });
+    });
+
+    // Theme switcher functionality
+    const themeSwitch = document.getElementById('theme-switch');
+    const themeIcon = themeSwitch.querySelector('i');
+    
+    // Check for saved theme preference or respect OS preference
+    const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+    const savedTheme = localStorage.getItem('theme');
+    
+    if (savedTheme === 'dark' || (!savedTheme && prefersDarkScheme.matches)) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        themeIcon.classList.replace('fa-moon', 'fa-sun');
+    }
+    
+    themeSwitch.addEventListener('click', () => {
+        // Toggle theme
+        const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+        
+        // Set the theme
+        document.documentElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+        
+        // Update icon
+        if (newTheme === 'dark') {
+            themeIcon.classList.replace('fa-moon', 'fa-sun');
+        } else {
+            themeIcon.classList.replace('fa-sun', 'fa-moon');
+        }
+    });
 });
