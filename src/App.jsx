@@ -6,10 +6,14 @@ import * as THREE from "three";
 // Expandable Card Component
 function ExpandableCard({ sec }) {
   const [expanded, setExpanded] = useState(false);
+  const hasDetails = Boolean(sec.details && sec.details.trim().length > 0);
+  const hasImage = Boolean(sec.image);
+  const hasCardLinks = Array.isArray(sec.cardLinks) && sec.cardLinks.length > 0;
+  const canExpand = hasDetails || hasImage || hasCardLinks;
 
   return (
     <div 
-      onClick={() => setExpanded(!expanded)}
+      onClick={() => canExpand && setExpanded(!expanded)}
       style={{ 
         background: "#f9fafb", 
         borderRadius: "12px", 
@@ -18,9 +22,9 @@ function ExpandableCard({ sec }) {
         display: "flex",
         flexDirection: "column",
         border: expanded ? "2px solid #3b82f6" : "1px solid #e5e7eb",
-        cursor: "pointer",
+        cursor: canExpand ? "pointer" : "default",
         transition: "all 0.2s ease-in-out",
-        transform: expanded ? "scale(1.02)" : "scale(1)",
+        transform: expanded && canExpand ? "scale(1.02)" : "scale(1)",
         padding: "12px"
       }}
     >
@@ -28,9 +32,11 @@ function ExpandableCard({ sec }) {
         <h3 style={{ margin: "0", fontSize: "1.05rem", color: "#2563eb", fontWeight: 700 }}>
           {sec.subtitle}
         </h3>
-        <span style={{ color: "#6b7280", fontSize: "1.2rem", marginLeft: "8px", lineHeight: 1 }}>
-          {expanded ? "−" : "+"}
-        </span>
+        {canExpand && (
+          <span style={{ color: "#6b7280", fontSize: "1.2rem", marginLeft: "8px", lineHeight: 1 }}>
+            {expanded ? "−" : "+"}
+          </span>
+        )}
       </div>
 
       {!expanded && (
@@ -39,7 +45,7 @@ function ExpandableCard({ sec }) {
         </p>
       )}
 
-      {expanded && (
+      {expanded && canExpand && (
         <div style={{
           marginTop: "12px",
           paddingTop: "12px",
@@ -49,7 +55,7 @@ function ExpandableCard({ sec }) {
           gap: "8px",
           animation: "fadeIn 0.3s ease-in-out"
         }}>
-          {sec.image && (
+          {hasImage && (
             <img 
               src={sec.image} 
               alt={sec.subtitle} 
@@ -61,13 +67,13 @@ function ExpandableCard({ sec }) {
             {sec.text}
           </p>
           
-          {sec.details && (
+          {hasDetails && (
             <p style={{ margin: 0, fontSize: "0.9rem", lineHeight: 1.4, color: "#4b5563", whiteSpace: "pre-line" }}>
               {sec.details}
             </p>
           )}
 
-          {sec.cardLinks && sec.cardLinks.length > 0 && (
+          {hasCardLinks && (
             <div style={{ marginTop: "4px", display: "flex", gap: "8px", flexWrap: "wrap" }}>
               {sec.cardLinks.map(link => (
                 <a
@@ -138,10 +144,11 @@ function MapModel() {
   return <primitive object={scene} position={[0, -1, 0]} rotation={[0, Math.PI / 2, 0]} />; 
 }
 
-function Experience({ checkpoints, onActiveCheckpointChange }) {
+function Experience({ checkpoints, onActiveCheckpointChange, onJourneyEndChange }) {
   const scroll = useScroll();
   const carWrapperRef = useRef();
   const activeCheckpointRef = useRef(null);
+  const isAtJourneyEndRef = useRef(false);
 
   const getFocusTargetForPin = (pinPosition) => {
     return new THREE.Vector3(pinPosition[0], pinPosition[1] + 14, pinPosition[2]);
@@ -185,6 +192,12 @@ function Experience({ checkpoints, onActiveCheckpointChange }) {
   useFrame((state) => {
     const rawTime = scroll.offset;
     const introDuration = 0.08; 
+
+    const nextIsAtJourneyEnd = rawTime >= 0.985;
+    if (isAtJourneyEndRef.current !== nextIsAtJourneyEnd) {
+      isAtJourneyEndRef.current = nextIsAtJourneyEnd;
+      onJourneyEndChange(nextIsAtJourneyEnd);
+    }
     
     // --- CAR MOVEMENT LOGIC ---
     // Car moves from the very start, slower during intro zoom, then normal speed.
@@ -317,12 +330,40 @@ function Experience({ checkpoints, onActiveCheckpointChange }) {
 
 export default function App() {
   const [activeCheckpointId, setActiveCheckpointId] = useState(null);
+  const [isEndModalOpen, setIsEndModalOpen] = useState(false);
+  const [hasDismissedEndModal, setHasDismissedEndModal] = useState(false);
 
   const forwardWheelToScene = (event) => {
     const scrollArea = document.getElementById("r3f-scroll-area");
     if (!scrollArea) return;
     event.preventDefault();
     scrollArea.scrollTop += event.deltaY;
+  };
+
+  const handleJourneyEndChange = (isAtEnd) => {
+    if (isAtEnd) {
+      if (!hasDismissedEndModal) {
+        setIsEndModalOpen(true);
+      }
+      return;
+    }
+
+    setIsEndModalOpen(false);
+    setHasDismissedEndModal(false);
+  };
+
+  const closeEndModal = () => {
+    setIsEndModalOpen(false);
+    setHasDismissedEndModal(true);
+  };
+
+  const replayJourney = () => {
+    const scrollArea = document.getElementById("r3f-scroll-area");
+    if (scrollArea) {
+      scrollArea.scrollTo({ top: 0, behavior: "smooth" });
+    }
+    setIsEndModalOpen(false);
+    setHasDismissedEndModal(false);
   };
 
   // Ordered by travel progression (new reversed route): low time -> high time.
@@ -418,10 +459,10 @@ export default function App() {
       links: [
         { label: "GitHub Profile", href: "https://github.com/AlexGo07" }
       ],
-      pinPosition: [24, 7, 29],
-      time: 0.38,
-      target: new THREE.Vector3(24, 21, 29),
-      camPos: new THREE.Vector3(36, 23, 41),
+      pinPosition: [20, 8, -6],
+      time: 0.62,
+      target: new THREE.Vector3(30, 19, -2),
+      camPos: new THREE.Vector3(-6, 21, 10),
       duration: 0.04
     },
     {
@@ -447,10 +488,10 @@ export default function App() {
       links: [
         { label: "LinkedIn", href: "https://linkedin.com/in/alex-gorgan-6738712bb/" }
       ],
-      pinPosition: [2, 8, 18],
-      time: 0.5,
-      target: new THREE.Vector3(2, 24, 18),
-      camPos: new THREE.Vector3(12, 24, 26),
+      pinPosition: [44, 9, 24],
+      time: 0.88,
+      target: new THREE.Vector3(44, 23, 24),
+      camPos: new THREE.Vector3(52, 23, 34),
       duration: 0.04
     },
     {
@@ -467,10 +508,10 @@ export default function App() {
         { label: "CS50 Web", href: "https://cs50.harvard.edu/web/2020/" },
         { label: "Cisco Networking", href: "https://www.netacad.com/courses/networking-basics?courseLang=en-US" }
       ],
-      pinPosition: [-18, 5, -2],
-      time: 0.62,
-      target: new THREE.Vector3(-18, 19, -2),
-      camPos: new THREE.Vector3(-6, 21, 10),
+      pinPosition: [24, 7, 29],
+      time: 0.38,
+      target: new THREE.Vector3(24, 21, 29),
+      camPos: new THREE.Vector3(36, 23, 41),
       duration: 0.04
     },
     {
@@ -487,30 +528,10 @@ export default function App() {
         { label: "GitHub Profile", href: "https://github.com/AlexGo07" },
         { label: "Download CV", href: "/CV.pdf" }
       ],
-      pinPosition: [20, 8, -6],
-      time: 0.76,
-      target: new THREE.Vector3(20, 22, -6),
-      camPos: new THREE.Vector3(32, 24, 6),
-      duration: 0.04
-    },
-    {
-      id: "contact",
-      title: "Contact",
-      sections: [
-        { subtitle: "Email", text: "gorganalexandru3@gmail.com" },
-        { subtitle: "Phone", text: "+40771353438" },
-        { subtitle: "Languages", text: "English C1, German B2, French A2." },
-        { subtitle: "Availability", text: "Open to internships, student roles, and collaboration opportunities." }
-      ],
-      links: [
-        { label: "Portfolio", href: "https://alexgo07.github.io/portofolio/" },
-        { label: "LinkedIn", href: "https://linkedin.com/in/alex-gorgan-6738712bb/" },
-        { label: "Download CV", href: "/CV.pdf" }
-      ],
-      pinPosition: [44, 9, 24],
-      time: 0.88,
-      target: new THREE.Vector3(44, 23, 24),
-      camPos: new THREE.Vector3(52, 23, 34),
+      pinPosition: [2, 8, 18],
+      time: 0.5,
+      target: new THREE.Vector3(2, 24, 18),
+      camPos: new THREE.Vector3(12, 24, 26),
       duration: 0.04
     }
   ];
@@ -524,11 +545,15 @@ export default function App() {
         <directionalLight position={[10, 10, 10]} intensity={2} />
         <Environment preset="city" />
         <ScrollControls pages={6} damping={0.2}>
-          <Experience checkpoints={checkpoints} onActiveCheckpointChange={setActiveCheckpointId} />
+          <Experience
+            checkpoints={checkpoints}
+            onActiveCheckpointChange={setActiveCheckpointId}
+            onJourneyEndChange={handleJourneyEndChange}
+          />
         </ScrollControls>
       </Canvas>
 
-      {activeCheckpoint && (
+      {activeCheckpoint && !isEndModalOpen && (
         <div
           style={{
             position: "absolute",
@@ -596,6 +621,96 @@ export default function App() {
             <p style={{ marginTop: 22, marginBottom: 0, textAlign: "center", color: "#6b7280" }}>
               Scroll to continue
             </p>
+          </div>
+        </div>
+      )}
+
+      {isEndModalOpen && (
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            background: "rgba(16, 24, 40, 0.78)",
+            zIndex: 20,
+            pointerEvents: "none"
+          }}
+        >
+          <div
+            style={{
+              width: "min(780px, 94vw)",
+              background: "#ffffff",
+              borderRadius: "22px",
+              border: "3px solid #2563eb",
+              boxShadow: "0 20px 60px rgba(0, 0, 0, 0.45)",
+              padding: "24px 28px",
+              pointerEvents: "auto",
+              display: "flex",
+              flexDirection: "column",
+              gap: "14px"
+            }}
+            onWheel={forwardWheelToScene}
+          >
+            <h2 style={{ margin: 0, fontSize: "1.9rem", color: "#1e3a8a", textAlign: "center", fontWeight: 800 }}>
+              The real journey only starts now.
+            </h2>
+
+            <p style={{ margin: 0, textAlign: "center", color: "#4b5563", lineHeight: 1.5 }}>
+              Thank you for taking the tour. If you want to build something together, feel free to reach out.
+            </p>
+
+            <div style={{ marginTop: 6, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "12px" }}>
+              <div style={{ background: "#f8fafc", border: "1px solid #e2e8f0", borderRadius: "12px", padding: "12px" }}>
+                <p style={{ margin: 0, fontSize: "0.85rem", color: "#64748b", fontWeight: 700 }}>Email</p>
+                <p style={{ margin: "6px 0 0 0", color: "#0f172a", fontWeight: 600 }}>gorganalexandru3@gmail.com</p>
+              </div>
+              <div style={{ background: "#f8fafc", border: "1px solid #e2e8f0", borderRadius: "12px", padding: "12px" }}>
+                <p style={{ margin: 0, fontSize: "0.85rem", color: "#64748b", fontWeight: 700 }}>Phone</p>
+                <p style={{ margin: "6px 0 0 0", color: "#0f172a", fontWeight: 600 }}>+40 771 353 438</p>
+              </div>
+            </div>
+
+            <div style={{ marginTop: 4, display: "flex", gap: 12, flexWrap: "wrap", justifyContent: "center" }}>
+              <a
+                href="mailto:gorganalexandru3@gmail.com"
+                style={{ textDecoration: "none", background: "#2563eb", color: "#fff", padding: "10px 16px", borderRadius: 10, fontWeight: 700 }}
+              >
+                Email Me
+              </a>
+              <a
+                href="https://linkedin.com/in/alex-gorgan-6738712bb/"
+                target="_blank"
+                rel="noreferrer"
+                style={{ textDecoration: "none", background: "#0f172a", color: "#fff", padding: "10px 16px", borderRadius: 10, fontWeight: 700 }}
+              >
+                LinkedIn
+              </a>
+              <a
+                href="/CV.pdf"
+                target="_blank"
+                rel="noreferrer"
+                style={{ textDecoration: "none", background: "#e2e8f0", color: "#0f172a", padding: "10px 16px", borderRadius: 10, fontWeight: 700 }}
+              >
+                Download CV
+              </a>
+            </div>
+
+            <div style={{ marginTop: 4, display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
+              <button
+                onClick={replayJourney}
+                style={{ border: "none", background: "#1d4ed8", color: "#fff", padding: "10px 16px", borderRadius: 10, fontWeight: 700, cursor: "pointer" }}
+              >
+                Replay Journey
+              </button>
+              <button
+                onClick={closeEndModal}
+                style={{ border: "1px solid #cbd5e1", background: "#fff", color: "#334155", padding: "10px 16px", borderRadius: 10, fontWeight: 700, cursor: "pointer" }}
+              >
+                Close
+              </button>
+            </div>
           </div>
         </div>
       )}
