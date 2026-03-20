@@ -3,6 +3,8 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import { ScrollControls, useScroll, Environment, useGLTF } from "@react-three/drei";
 import * as THREE from "three";
 
+const assetPath = (path) => `${import.meta.env.BASE_URL}${path.replace(/^\//, "")}`;
+
 // Expandable Card Component
 function ExpandableCard({ sec }) {
   const [expanded, setExpanded] = useState(false);
@@ -131,13 +133,13 @@ function CheckpointCard({ position }) {
 }
 
 function CarModel() {
-  const { scene } = useGLTF("/1989_porsche_911_964_carrera_4.glb");
+  const { scene } = useGLTF(assetPath("/1989_porsche_911_964_carrera_4.glb"));
   // Adjust scale back down, rotate to see if it makes sense.
   return <primitive object={scene} scale={[100, 100, 100]} position={[0, -0.5, 0]} />;
 }
 
 function MapModel() {
-  const { scene } = useGLTF("/lowpoly_city.glb");
+  const { scene } = useGLTF(assetPath("/lowpoly_city.glb"));
   // position={[X, Y, Z]} moves the map left/right, up/down, forward/backwards
   // rotation={[X, Y, Z]} rotates the map. Y is the vertical axis (spinning it around).
   // Math.PI / 2 = 90 degrees. Math.PI = 180 degrees.
@@ -372,9 +374,9 @@ export default function App() {
       id: "about",
       title: "About Me",
       sections: [
-        { subtitle: "Name", text: "Gorgan Alexandru-Răzvan", image: "/img/CXC_1707.jpg", details: "Passionate about full-stack engineering, AI-enabled apps, and practical systems." },
+        { subtitle: "Name", text: "Gorgan Alexandru-Răzvan", image: assetPath("/img/CXC_1707.jpg"), details: "Passionate about full-stack engineering, AI-enabled apps, and practical systems." },
         { subtitle: "Education", text: "Computer Science student (German section)\nBabeș-Bolyai University, 3rd year.", details: "" },
-        { subtitle: "Focus", text: "Working on robust backends, modern frontends, and AI pipelines.", image: "/img/portofolio.png", details: "" }
+        { subtitle: "Focus", text: "Working on robust backends, modern frontends, and AI pipelines.", image: assetPath("/img/portofolio.png"), details: "" }
       ],
       links: [
         { label: "Portfolio", href: "https://alexgo07.github.io/portofolio/" },
@@ -394,7 +396,7 @@ export default function App() {
         { 
           subtitle: "AI-Powered Collaborative Workspace", 
           text: "(Trello Clone)",
-          image: "/img/sgbd.png",
+          image: assetPath("/img/sgbd.png"),
           details: "Co-developed a task management app featuring intelligent data retrieval and semantic search, utilizing Chroma DB to handle complex context and unstructured data."
         },
         { 
@@ -405,7 +407,7 @@ export default function App() {
         { 
           subtitle: "Droply", 
           text: "(Delivery Management System)", 
-          image: "/img/delivery-service.png",
+          image: assetPath("/img/delivery-service.png"),
           details: "Co-developed an Object-Oriented Java MVC application to manage logistics, track deliveries, and streamline courier operations.",
           cardLinks: [{ label: "View Project", href: "https://github.com/AlexGo07/" }] 
         },
@@ -417,41 +419,41 @@ export default function App() {
         { 
           subtitle: "Bachelor's Thesis", 
           text: "AI Fake News Detector",
-          image: "/img/web-scrapper.png",
+          image: assetPath("/img/web-scrapper.png"),
           details: "Actively developing an NLP-based machine learning model (using Python) to detect and classify fake news within Romanian online content."
         },
         { 
           subtitle: "Multiplayer Battleship Game", 
           text: "Real-time client-server desktop game", 
-          image: "/img/battleship.png",
+          image: assetPath("/img/battleship.png"),
           details: "Developed a real-time client-server desktop game utilizing TCP Sockets for network communication. Implemented cross-language compatibility using Java, Python, and C#.",
           cardLinks: [{ label: "Source Code", href: "https://github.com/AlexGo07/BattleshipWithTcp" }] 
         },
         { 
           subtitle: "Delivery Service (OOP)", 
           text: "Java / Gradle / Postgres", 
-          image: "/img/delivery-service1.png",
+          image: assetPath("/img/delivery-service1.png"),
           details: "Worked with a collegue on developing an application for a delivery company, that is similar to Bolt/Uber. Anyone can join and deliver packages as a side-job.",
           cardLinks: [{ label: "Source Code", href: "https://github.com/robertemi/Delivery_Service2" }] 
         },
         { 
           subtitle: "Database Handling System", 
           text: "Frontend in Tkinter handling Postgres/MySQL.", 
-          image: "/img/sgbd.png",
+          image: assetPath("/img/sgbd.png"),
           details: "An application with frontend in Tkinter that tests different problems and concurrency handling scenarios in Databases using Python and Java.",
           cardLinks: [{ label: "Source Code", href: "https://github.com/AlexGo07/SGBD-Delivery-Service" }] 
         },
         { 
           subtitle: "Web-scraper", 
           text: "Flight scraping sorting app in Python.", 
-          image: "/img/web-scrapper.png",
+          image: assetPath("/img/web-scrapper.png"),
           details: "A scraping app for flights with dynamic sorting capabilities utilizing BeautifulSoup4 and Selenium.",
           cardLinks: [{ label: "Source Code", href: "https://github.com/AlexGo07/FlightScrapper" }] 
         },
         { 
           subtitle: "Car Rental", 
           text: "First team project utilizing OOP concepts in C++.", 
-          image: "/img/CarRental1.png",
+          image: assetPath("/img/CarRental1.png"),
           details: "Worked with colleagues to develop core architecture and flows using Git for version control and C++ for logic.",
           cardLinks: [{ label: "Source Code", href: "https://github.com/dariuscruceru21/CarSharingFInal" }] 
         }
@@ -526,7 +528,7 @@ export default function App() {
       ],
       links: [
         { label: "GitHub Profile", href: "https://github.com/AlexGo07" },
-        { label: "Download CV", href: "/CV.pdf" }
+        { label: "Download CV", href: assetPath("/CV.pdf") }
       ],
       pinPosition: [2, 8, 18],
       time: 0.5,
@@ -688,7 +690,7 @@ export default function App() {
                 LinkedIn
               </a>
               <a
-                href="/CV.pdf"
+                href={assetPath("/CV.pdf")}
                 target="_blank"
                 rel="noreferrer"
                 style={{ textDecoration: "none", background: "#e2e8f0", color: "#0f172a", padding: "10px 16px", borderRadius: 10, fontWeight: 700 }}
